@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>To-Do Liste</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        max-width: 600px;
+        margin: 50px auto;
+      }
+      .task {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .completed {
+        text-decoration: line-through;
+        color: grey;
+      }
+      .btn {
+        margin-left: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>To-Do Liste</h1>
+      <form action="/add" method="post">
+        <input type="text" name="content" placeholder="Neue Aufgabe hinzufügen" required>
+        <button type="submit">Hinzufügen</button>
+      </form>
+      <h2>Offene Aufgaben</h2>
+      <div id="pending-tasks">
+        {% for task in pending_tasks %}
+          <div class="task">
+            <span>{{ task.content }}</span>
+            <div>
+              <a href="/complete/{{ task.id }}" class="btn">Erledigt</a>
+              <a href="/delete/{{ task.id }}" class="btn">Löschen</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <h2>Erledigte Aufgaben</h2>
+      <div id="completed-tasks">
+        {% for task in completed_tasks %}
+          <div class="task completed">
+            <span>{{ task.content }}</span>
+            <a href="/delete/{{ task.id }}" class="btn">Löschen</a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>
