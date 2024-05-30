@@ -21,23 +21,15 @@ def add_task():
         tasks.append({'id': task_id, 'content': task_content, 'completed': False})
     return redirect(url_for('index'))
 
-@app.route('/complete/<task_id>')
-def complete_task(task_id):
+@app.route('/update/<task_id>', methods=['POST'])
+def update_task(task_id):
     for task in tasks:
         if task['id'] == task_id:
-            task['completed'] = True
+            task['completed'] = 'completed' in request.form
             break
     return redirect(url_for('index'))
 
-@app.route('/uncomplete/<task_id>')
-def uncomplete_task(task_id):
-    for task in tasks:
-        if task['id'] == task_id:
-            task['completed'] = False
-            break
-    return redirect(url_for('index'))
-
-@app.route('/delete/<task_id>')
+@app.route('/delete/<task_id>', methods=['POST'])
 def delete_task(task_id):
     global tasks
     tasks = [task for task in tasks if task['id'] != task_id]

@@ -15,17 +15,34 @@
       .task {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         margin-bottom: 10px;
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 5px;
       }
-      .completed {
+      .task-content {
+        flex-grow: 1;
+      }
+      .completed .task-content {
         text-decoration: line-through;
         color: grey;
       }
       .btn {
         margin-left: 10px;
+      }
+      .delete-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2em;
+      }
+      .delete-btn:hover {
+        color: red;
+      }
+      .task-actions {
+        display: flex;
+        align-items: center;
       }
     </style>
   </head>
@@ -40,10 +57,14 @@
       <div id="pending-tasks">
         {% for task in pending_tasks %}
           <div class="task">
-            <span>{{ task.content }}</span>
-            <div>
-              <a href="/complete/{{ task.id }}" class="btn">Erledigt</a>
-              <a href="/delete/{{ task.id }}" class="btn">Löschen</a>
+            <span class="task-content">{{ task.content }}</span>
+            <div class="task-actions">
+              <form action="/delete/{{ task.id }}" method="post" style="display:inline;">
+                <button type="submit" class="delete-btn">🗑️</button>
+              </form>
+              <form action="/update/{{ task.id }}" method="post" style="display:inline;">
+                <input type="checkbox" name="completed" onChange="this.form.submit()">
+              </form>
             </div>
           </div>
         {% endfor %}
@@ -52,10 +73,14 @@
       <div id="completed-tasks">
         {% for task in completed_tasks %}
           <div class="task completed">
-            <span>{{ task.content }}</span>
-            <div>
-              <a href="/uncomplete/{{ task.id }}" class="btn">Zurück zu unerledigt</a>
-              <a href="/delete/{{ task.id }}" class="btn">Löschen</a>
+            <span class="task-content">{{ task.content }}</span>
+            <div class="task-actions">
+              <form action="/delete/{{ task.id }}" method="post" style="display:inline;">
+                <button type="submit" class="delete-btn">🗑️</button>
+              </form>
+              <form action="/update/{{ task.id }}" method="post" style="display:inline;">
+                <input type="checkbox" name="completed" checked onChange="this.form.submit()">
+              </form>
             </div>
           </div>
         {% endfor %}
