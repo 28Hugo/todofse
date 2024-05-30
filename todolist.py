@@ -29,6 +29,14 @@ def complete_task(task_id):
             break
     return redirect(url_for('index'))
 
+@app.route('/uncomplete/<task_id>')
+def uncomplete_task(task_id):
+    for task in tasks:
+        if task['id'] == task_id:
+            task['completed'] = False
+            break
+    return redirect(url_for('index'))
+
 @app.route('/delete/<task_id>')
 def delete_task(task_id):
     global tasks

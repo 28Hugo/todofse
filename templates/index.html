@@ -53,7 +53,10 @@
         {% for task in completed_tasks %}
           <div class="task completed">
             <span>{{ task.content }}</span>
-            <a href="/delete/{{ task.id }}" class="btn">Löschen</a>
+            <div>
+              <a href="/uncomplete/{{ task.id }}" class="btn">Zurück zu unerledigt</a>
+              <a href="/delete/{{ task.id }}" class="btn">Löschen</a>
+            </div>
           </div>
         {% endfor %}
       </div>
