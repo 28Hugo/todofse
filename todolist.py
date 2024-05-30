@@ -35,5 +35,14 @@ def delete_task(task_id):
     tasks = [task for task in tasks if task['id'] != task_id]
     return redirect(url_for('index'))
 
+@app.route('/edit/<task_id>', methods=['POST'])
+def edit_task(task_id):
+    new_content = request.form['content']
+    for task in tasks:
+        if task['id'] == task_id:
+            task['content'] = new_content
+            break
+    return redirect(url_for('index'))
+
 if __name__ == '__main__':
     app.run(debug=True)

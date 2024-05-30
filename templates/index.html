@@ -31,7 +31,7 @@
       .btn {
         margin-left: 10px;
       }
-      .delete-btn {
+      .delete-btn, .edit-btn {
         background: none;
         border: none;
         cursor: pointer;
@@ -40,11 +40,30 @@
       .delete-btn:hover {
         color: red;
       }
+      .edit-btn:hover {
+        color: blue;
+      }
       .task-actions {
         display: flex;
         align-items: center;
       }
+      .edit-form {
+        display: none;
+      }
     </style>
+    <script>
+      function toggleEditForm(taskId) {
+        const editForm = document.getElementById(`edit-form-${taskId}`);
+        const taskContent = document.getElementById(`task-content-${taskId}`);
+        if (editForm.style.display === 'none') {
+          editForm.style.display = 'block';
+          taskContent.style.display = 'none';
+        } else {
+          editForm.style.display = 'none';
+          taskContent.style.display = 'block';
+        }
+      }
+    </script>
   </head>
   <body>
     <div class="container">
@@ -57,8 +76,13 @@
       <div id="pending-tasks">
         {% for task in pending_tasks %}
           <div class="task">
-            <span class="task-content">{{ task.content }}</span>
+            <span class="task-content" id="task-content-{{ task.id }}">{{ task.content }}</span>
+            <form id="edit-form-{{ task.id }}" class="edit-form" action="/edit/{{ task.id }}" method="post">
+              <input type="text" name="content" value="{{ task.content }}" required>
+              <button type="submit">Speichern</button>
+            </form>
             <div class="task-actions">
+              <button type="button" class="edit-btn" onclick="toggleEditForm('{{ task.id }}')">✏️</button>
               <form action="/delete/{{ task.id }}" method="post" style="display:inline;">
                 <button type="submit" class="delete-btn">🗑️</button>
               </form>
