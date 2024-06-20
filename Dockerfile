@@ -1,5 +1,5 @@
 # Basis-Image mit Python
-FROM python:3.8
+FROM python:3.12
 
 # Arbeitsverzeichnis festlegen
 WORKDIR /app
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 5000
 
 # Startbefehl für die Flask-App
-CMD ["python", "app.py"]
+CMD ["python", "-u", "app.py"]
