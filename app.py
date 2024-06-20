@@ -123,12 +123,18 @@ def load_user(user_id):
     return User(user_dict)
 
 
+@app.route('/register', methods=['GET'])
+def register_form():
+    return send_from_directory("frontend", 'register.html')
+
+
+
 @app.route('/register', methods=['POST'])
 def register():
     users = db['users']
     # Get data from request
-    email = request.json.get('email')
-    password = request.json.get('password')
+    email = request.form.get('email')
+    password = request.form.get('password')
 
     # Check if email already exists
     if users.find_one({'email': email}):
@@ -175,7 +181,7 @@ def login():
     }
     login_user(User(user_dict))
 
-    return jsonify({"message": "Logged in successfully"}), 200
+    return send_from_directory("frontend", "index.html")
 
 
 @app.route('/logout')
