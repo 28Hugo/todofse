@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MainPage</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .navbar {
+            background-color: #333;
+            padding: 0 16px;
+            position: relative;
+        }
+        .navbar a {
+            color: #f2f2f2;
+            padding: 14px 16px;
+            text-decoration: none;
+            text-align: center;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .navbar a.text-link {
+            color: #f2f2f2;
+            padding: 14px 16px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .navbar a.text-link:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .navbar a.icon-link {
+            padding: 14px 16px;
+        }
+
+        .nav-center {
+            display: flex;
+            justify-content: center;
+        }
+
+        .icon-left,
+        .icon-right {
+            position: absolute;
+            top: 14px;
+            width: 25px;
+        }
+
+        .icon-left {
+            left: 16px;
+        }
+
+        .icon-right {
+            right: 16px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background-color: #f2f2f2;
+            width: 23%;
+            margin: 1%;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        }
+
+
+        img {
+            width: 100%;
+            border-radius: 10px 10px 0 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <a class="icon-link" href="http://localhost:5001/"><img class="icon-left" src="static/img/login-list.png"
+                                                            alt="Home icon" width="25"
+                                                            heigth="25"></a>
+    <div class="nav-center">
+        <a class="text-link" href="#">Home</a>
+        <a class="text-link" href="http://localhost:5001/weather">Wetter</a>
+        <a class="text-link" href="#">Page 3</a></div>
+    <a class="icon-link" href="http://localhost:5001/logout"><img class="icon-right" src="static/icons/user-icon.png"
+                                                                  alt="User icon"
+                                                                  width="25" height="25"></a>
+</div>
+
+<div class="container">
+    <div class="card">
+        <img src="static/img/login-list.png" alt="Image 1" style="width:100%">
+        <div class="container">
+            <h4><b>Wetter</b></h4>
+            <p>Some text..</p>
+        </div>
+    </div>
+    <div class="card">
+        <img src="static/img/login-list.png" alt="Image 1" style="width:100%">
+        <div class="container">
+            <h4><b>Todo-Liste</b></h4>
+            <p>Some text..</p>
+        </div>
+    </div>
+    <div class="card">
+        <img src="static/img/login-list.png" alt="Image 1" style="width:100%">
+        <div class="container">
+            <h4><b>Calendar</b></h4>
+            <p>Some text..</p>
+        </div>
+    </div>
+    <div class="card">
+        <img src="static/img/login-list.png" alt="Image 1" style="width:100%">
+        <div class="container">
+            <h4><b>Wetter</b></h4>
+            <p>Some text..</p>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

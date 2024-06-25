@@ -113,7 +113,7 @@ def get_weather():
 @app.route('/', methods=['GET'])
 @login_required
 def default():
-    return send_from_directory('frontend', 'index.html')
+    return send_from_directory('frontend', 'dashboard.html')
 
 
 @login_manager.user_loader
@@ -181,7 +181,7 @@ def login():
     }
     login_user(User(user_dict))
 
-    return send_from_directory("frontend", "index.html")
+    return default()
 
 
 @app.route('/logout')
