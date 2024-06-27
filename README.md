@@ -36,6 +36,15 @@ erDiagram
         String repeat_intervall
     }
     
+    Notiz{
+        int _id
+        int user_id
+        datetime created_at
+        datetime updated_at
+        String title
+        String content
+    }
+    
     User{
         int user_id
         String username
