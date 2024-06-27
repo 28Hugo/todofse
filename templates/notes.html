@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notizen</title>
+</head>
+<body>
+    <h1>Notes</h1>
+    <form method="POST">
+        <textarea name="title"></textarea>
+        <textarea name="content"></textarea>
+        <button type="submit">Add Note</button>
+    </form>
+    <hr>
+    <h2>List of Notes :</h2>
+    <ul>
+        {% for note in notes %}
+            <li><a href="{{ url_for('note_detail', note_id=note._id) }}">{{ note.title }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
