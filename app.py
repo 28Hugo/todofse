@@ -29,6 +29,7 @@ bcrypt = Bcrypt(app)
 db = MongoClient("mongodb://mongo:27017").get_database("mydatabase")
 # collection instance
 tasks_collection = db["tasks"]
+notes_collection = db["Notes"]
 
 
 # Updated categories
@@ -88,11 +89,12 @@ def get_weather():
 @app.route('/', methods=['GET'])
 @login_required
 def default():
-    return send_from_directory('frontend', 'dashboard.html')
+    _notes = notes_collection.find({'user_id': current_user.get_id()})
+    return render_template("dashboard.html", notes=_notes)
 
 
 @login_manager.user_loader
-def load_user(user_id):
+def load_user(user_id) -> User:
     users = db['users']
     user_dict = users.find_one({'_id': ObjectId(user_id)})
     return User(user_dict)
@@ -101,7 +103,6 @@ def load_user(user_id):
 @app.route('/register', methods=['GET'])
 def register_form():
     return send_from_directory("frontend", 'register.html')
-
 
 
 @app.route('/register', methods=['POST'])
@@ -155,14 +156,38 @@ def login():
     }
     login_user(User(user_dict))
 
-    return default()
+    return redirect(url_for('default'))
+
+
+@app.route('/notes', methods=['GET', 'POST'])
+def notes():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        content = request.form.get('content')
+        notes_collection.insert_one({
+            'title': title,
+            'content': content,
+            'user_id': current_user.get_id(),
+            'created_at': datetime.now(),
+            'updated_at': datetime.now(),
+            })
+        return redirect(url_for('notes'))
+    else:
+        _notes = notes_collection.find({"user_id": current_user.get_id()})
+        return render_template('notes.html', notes=_notes)
+
+
+@app.route('/note/<note_id>')
+def note_detail(note_id):
+    note = notes_collection.find_one({'_id': ObjectId(note_id)})
+    return render_template('note.html', note=note)
 
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return jsonify({'message': 'Logged out successfully'}), 200
+    return redirect(url_for('default'))
 
 
 if __name__ == "__main__":
