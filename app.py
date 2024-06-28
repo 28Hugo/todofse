@@ -164,11 +164,10 @@ def login_form():
 def login():
     users = db['users']
     # Get data from request
-    email = request.form.get('email')
+    email = request.form.get('username')
     password = request.form.get('password')
-
     # Find the user by email
-    user = users.find_one({'email': 'admin'})
+    user = users.find_one({'email': email})
 
     # If user doesn't exist or password is wrong
     if not user or not bcrypt.check_password_hash(user['password'], password):
