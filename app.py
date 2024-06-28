@@ -133,7 +133,7 @@ def register_form():
 def register():
     users = db['users']
     # Get data from request
-    email = request.form.get('email')
+    email = request.form.get('username')
     password = request.form.get('password')
 
     # Check if email already exists
