@@ -128,7 +128,7 @@ def register():
     # Insert the user in the database
     users.insert_one(user)
 
-    return jsonify({'message': 'Registered successfully'}), 201
+    return redirect(url_for("login_form"))
 
 
 @app.route('/login', methods=['GET'])
