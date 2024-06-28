@@ -134,7 +134,7 @@ def register_form():
 def register():
     users = db['users']
     # Get data from request
-    email = request.form.get('email')
+    email = request.form.get('username')
     password = request.form.get('password')
 
     # Check if email already exists
@@ -153,7 +153,7 @@ def register():
     # Insert the user in the database
     users.insert_one(user)
 
-    return jsonify({'message': 'Registered successfully'}), 201
+    return redirect(url_for("login_form"))
 
 
 @app.route('/login', methods=['GET'])
@@ -165,11 +165,11 @@ def login_form():
 def login():
     users = db['users']
     # Get data from request
-    email = request.form.get('email')
+    email = request.form.get('username')
     password = request.form.get('password')
 
     # Find the user by email
-    user = users.find_one({'email': 'admin'})
+    user = users.find_one({'email': email})
 
     # If user doesn't exist or password is wrong
     if not user or not bcrypt.check_password_hash(user['password'], password):
