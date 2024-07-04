@@ -1,13 +1,13 @@
 from datetime import datetime
 
 from bson import ObjectId
-from flask import Flask, request, jsonify, send_from_directory, g
+from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
 from flask_cors import CORS
 import requests
 
-from flask_login import LoginManager, login_user, login_required, logout_user, UserMixin
+from flask_login import LoginManager, login_user, login_required, logout_user, UserMixin, current_user
 
 
 class User(UserMixin):
@@ -28,73 +28,48 @@ bcrypt = Bcrypt(app)
 
 db = MongoClient("mongodb://mongo:27017").get_database("mydatabase")
 # collection instance
-todos = db["Todos"]
+tasks_collection = db["tasks"]
+
+
+# Updated categories
+categories = ['Uni', 'Arbeit', 'Privat']
 
 # Your OpenWeatherMap API key
 WEATHER_API_KEY = '2321d60237674c67b4595038241006'
 
 
-# API endpoint to get todos data
-@app.route('/todos', methods=['GET'])
-def get_todos():
-    all_todos = todos.find()
+@app.get('/tasks')
+def tasks():
+    # Separate tasks into pending and completed
+    pending_tasks = tasks_collection.find({"user_id": current_user.get_id(), "status": "pending"})
+    completed_tasks = tasks_collection.find({"user_id": current_user.get_id(), "status": "completed"})
 
-    result = []
-    for todo in all_todos:
-        item = {
-            "id": str(todo['_id']),
-            "user_id": todo['user_id'],
-            "title": todo['title'],
-            "description": todo['description'],
-            "created_at": todo['created_at'].strftime('%Y-%m-%d %H:%M:%S') if todo.get('created_at') else None,
-            "updated_at": todo['updated_at'].strftime('%Y-%m-%d %H:%M:%S') if todo.get('updated_at') else None,
-            "due_date": todo['due_date'].strftime('%Y-%m-%d %H:%M:%S') if todo.get('due_date') else None,
-            "completed": todo['completed'],
-            "priority": todo['priority'],
-        }
-        result.append(item)
-    return jsonify(result), 200
+    return render_template('tasks.html', pending_tasks=pending_tasks, completed_tasks=completed_tasks, categories=categories)
 
+@app.route('/tasks/add', methods=['POST'])
+def add_task():
+    task_content = request.form.get('content')
+    task_category = request.form.get('category')  # Access 'category' field from form
+    if task_content:
+        tasks_collection.insert_one({"user_id": current_user.get_id(), 'content': task_content, 'category': task_category, 'status': "pending"})
+    return redirect(url_for('tasks'))
 
-@app.route('/todos/<id>', methods=['GET'])
-def get_todo(_id):
-    todo = todos.find_one({'_id': ObjectId(_id)})
-    if todo:
-        # Do data processing here and return the data
-        return_data = {
-            "id": str(todo.get('_id')),
-            "user_id": todo.get('user_id'),
-            "title": todo.get('title'),
-            "description": todo.get('description'),
-            "created_at": todo.get('created_at').strftime('%Y-%m-%d %H:%M:%S') if todo.get('created_at') else None,
-            "updated_at": todo.get('updated_at').strftime('%Y-%m-%d %H:%M:%S') if todo.get('updated_at') else None,
-            "due_date": todo.get('due_date').strftime('%Y-%m-%d %H:%M:%S') if todo.get('due_date') else None,
-            "completed": todo.get('completed'),
-            "priority": todo.get('priority'),
-        }
-        return jsonify(return_data), 200
-    else:
-        # Return not found if no Todo_element with that ID is found
-        return jsonify({'error': 'Todo not found'}), 404
+@app.route('/tasks/complete/<task_id>', methods=['POST'])
+def complete_task(task_id):
+    tasks_collection.update_one({"_id": ObjectId(task_id)}, {"$set":{"status": "completed"}})
+    return redirect(url_for('tasks'))
 
+@app.route('/tasks/delete/<task_id>', methods=['POST'])
+def delete_task(task_id):
+    tasks_collection.delete_one({'_id': ObjectId(task_id)})
+    return redirect(url_for('tasks'))
 
-# API endpoint to add customer data
-@app.route('/todos', methods=['POST'])
-def add_todo():
-    data = request.get_json()
-    new_todo = {
-        'user_id': data.get('user_id'),  # Get user_id from the request data
-        'title': data.get('title'),
-        'description': data.get('description', ''),  # Default to empty string if no description provided
-        'created_at': datetime.now(),
-        'updated_at': datetime.now(),
-        'due_date': datetime.strptime(data.get('due_date'), '%Y-%m-%d') if data.get('due_date') else None,
-        # Convert string date to datetime
-        'completed': data.get('completed', False),  # Default to False if no completion status provided
-        'priority': data.get('priority', 'Medium'),  # Default to Medium if no priority level provided
-    }
-    x = todos.insert_one(new_todo)
-    return jsonify({"id": str(x.inserted_id)}), 201
+@app.route('/tasks/edit/<task_id>', methods=['POST'])
+def edit_task(task_id):
+    new_content = request.form.get('content')
+    new_category = request.form.get('category')
+    tasks_collection.update_one({'_id': ObjectId(task_id)}, {"$set": {'content': new_content, 'category': new_category}}, upsert=False)
+    return redirect(url_for('tasks'))
 
 
 # API endpoint to get weather data
