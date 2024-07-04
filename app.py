@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from bson import ObjectId
-from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for
+from flask import Flask, request, jsonify, send_from_directory, g, redirect, render_template, url_for
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
 from flask_cors import CORS
@@ -28,7 +28,7 @@ bcrypt = Bcrypt(app)
 
 db = MongoClient("mongodb://mongo:27017").get_database("mydatabase")
 # collection instance
-tasks_collection = db["tasks"]
+todos = db["Todos"]
 notes_collection = db["Notes"]
 
 
