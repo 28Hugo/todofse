@@ -115,7 +115,9 @@ def get_weather():
 @login_required
 def default():
     _notes = notes_collection.find({'user_id': current_user.get_id()})
-    return render_template("dashboard.html", notes=_notes)
+
+    return render_template("dashboard.html", notes=list(_notes))
+
 
 
 @login_manager.user_loader
