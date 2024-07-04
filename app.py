@@ -28,7 +28,7 @@ bcrypt = Bcrypt(app)
 
 db = MongoClient("mongodb://mongo:27017").get_database("mydatabase")
 # collection instance
-tasks = db["Todos"]
+tasks_collection = db["tasks"]
 
 
 # Updated categories
@@ -39,10 +39,10 @@ WEATHER_API_KEY = '2321d60237674c67b4595038241006'
 
 
 @app.get('/tasks')
-def index():
+def tasks():
     # Separate tasks into pending and completed
-    pending_tasks = tasks.find({"user_id": current_user.get_id(), "status": "pending"})
-    completed_tasks = tasks.find({"user_id": current_user.get_id(), "status": "completed"})
+    pending_tasks = tasks_collection.find({"user_id": current_user.get_id(), "status": "pending"})
+    completed_tasks = tasks_collection.find({"user_id": current_user.get_id(), "status": "completed"})
 
     return render_template('tasks.html', pending_tasks=pending_tasks, completed_tasks=completed_tasks, categories=categories)
 
@@ -51,25 +51,25 @@ def add_task():
     task_content = request.form.get('content')
     task_category = request.form.get('category')  # Access 'category' field from form
     if task_content:
-        tasks.insert_one({"user_id": current_user.get_id(), 'content': task_content, 'category': task_category, 'Status': "pending"})
-    return redirect(url_for('todos'))
+        tasks_collection.insert_one({"user_id": current_user.get_id(), 'content': task_content, 'category': task_category, 'status': "pending"})
+    return redirect(url_for('tasks'))
 
 @app.route('/tasks/complete/<task_id>', methods=['POST'])
 def complete_task(task_id):
-    tasks.update_one({"_id": ObjectId(task_id)}, {"status": "completed"})
-    return redirect(url_for('index'))
+    tasks_collection.update_one({"_id": ObjectId(task_id)}, {"$set":{"status": "completed"}})
+    return redirect(url_for('tasks'))
 
 @app.route('/tasks/delete/<task_id>', methods=['POST'])
 def delete_task(task_id):
-    tasks.delete_one({'_id': ObjectId(task_id)})
-    return redirect(url_for('index'))
+    tasks_collection.delete_one({'_id': ObjectId(task_id)})
+    return redirect(url_for('tasks'))
 
-@app.route('tasks/edit/<task_id>', methods=['POST'])
+@app.route('/tasks/edit/<task_id>', methods=['POST'])
 def edit_task(task_id):
     new_content = request.form.get('content')
     new_category = request.form.get('category')
-    tasks.update_one({'_id': ObjectId(task_id)}, {'content': new_content, 'category': new_category}, upsert=False)
-    return redirect(url_for('index'))
+    tasks_collection.update_one({'_id': ObjectId(task_id)}, {"$set": {'content': new_content, 'category': new_category}}, upsert=False)
+    return redirect(url_for('tasks'))
 
 
 # API endpoint to get weather data
