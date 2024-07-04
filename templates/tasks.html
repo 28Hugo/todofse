@@ -100,7 +100,7 @@
 <body>
 <div class="container">
     <h1>To-Do Liste</h1>
-    <form action="/add" method="post">
+    <form action="/tasks/add" method="post">
         <input type="text" name="content" placeholder="Neue Aufgabe hinzufügen" required>
         <select name="category">
             {% for category in categories %}
@@ -113,9 +113,9 @@
     <div id="pending-tasks">
         {% for task in pending_tasks %}
             <div class="task">
-                <span class="task-content" id="task-content-{{ task.id }}">{{ task.content }}</span>
+                <span class="task-content" id="task-content-{{ task._id }}">{{ task.content }}</span>
                 <span class="task-category category-{{ task.category|lower }}">{{ task.category }}</span>
-                <form id="edit-form-{{ task.id }}" class="edit-form" action="/edit/{{ task.id }}" method="post">
+                <form id="edit-form-{{ task._id }}" class="edit-form" action="/tasks/edit/{{ task._id }}" method="post">
                     <input type="text" name="content" value="{{ task.content }}" required>
                     <select name="category">
                         {% for category in categories %}
@@ -125,11 +125,11 @@
                     <button type="submit">Speichern</button>
                 </form>
                 <div class="task-actions">
-                    <button type="button" class="edit-btn" onclick="toggleEditForm('{{ task.id }}')">✏️</button>
-                    <form action="/delete/{{ task.id }}" method="post" style="display:inline;">
+                    <button type="button" class="edit-btn" onclick="toggleEditForm('{{ task._id }}')">✏️</button>
+                    <form action="/tasks/delete/{{ task._id }}" method="post" style="display:inline;">
                         <button type="submit" class="delete-btn">🗑️</button>
                     </form>
-                    <form action="/update/{{ task.id }}" method="post" style="display:inline;">
+                    <form action="/tasks/complete/{{ task._id }}" method="post" style="display:inline;">
                         <input type="checkbox" name="completed" onChange="this.form.submit()" {% if task.completed %} checked {% endif %}>
                     </form>
                 </div>
@@ -143,10 +143,10 @@
                 <span class="task-content">{{ task.content }}</span>
                 <span class="task-category category-{{ task.category|lower }}">{{ task.category }}</span>
                 <div class="task-actions">
-                    <form action="/delete/{{ task.id }}" method="post" style="display:inline;">
+                    <form action="/tasks/delete/{{ task._id }}" method="post" style="display:inline;">
                         <button type="submit" class="delete-btn">🗑️</button>
                     </form>
-                    <form action="/update/{{ task.id }}" method="post" style="display:inline;">
+                    <form action="/tasks/complete/{{ task._id }}" method="post" style="display:inline;">
                         <input type="checkbox" name="completed" checked onChange="this.form.submit()">
                     </form>
                 </div>
