@@ -28,9 +28,9 @@ bcrypt = Bcrypt(app)
 
 db = MongoClient("mongodb://mongo:27017").get_database("mydatabase")
 # collection instance
+users = db['users']
 tasks_collection = db["tasks"]
 notes_collection = db["notes"]
-
 
 # Updated categories
 categories = ['Uni', 'Arbeit', 'Privat']
@@ -45,31 +45,38 @@ def tasks():
     pending_tasks = tasks_collection.find({"user_id": current_user.get_id(), "status": "pending"})
     completed_tasks = tasks_collection.find({"user_id": current_user.get_id(), "status": "completed"})
 
-    return render_template('tasks.html', pending_tasks=pending_tasks, completed_tasks=completed_tasks, categories=categories)
+    return render_template('tasks.html', pending_tasks=pending_tasks, completed_tasks=completed_tasks,
+                           categories=categories)
+
 
 @app.route('/tasks/add', methods=['POST'])
 def add_task():
     task_content = request.form.get('content')
     task_category = request.form.get('category')  # Access 'category' field from form
     if task_content:
-        tasks_collection.insert_one({"user_id": current_user.get_id(), 'content': task_content, 'category': task_category, 'status': "pending"})
+        tasks_collection.insert_one(
+            {"user_id": current_user.get_id(), 'content': task_content, 'category': task_category, 'status': "pending"})
     return redirect(url_for('tasks'))
+
 
 @app.route('/tasks/complete/<task_id>', methods=['POST'])
 def complete_task(task_id):
-    tasks_collection.update_one({"_id": ObjectId(task_id)}, {"$set":{"status": "completed"}})
+    tasks_collection.update_one({"_id": ObjectId(task_id)}, {"$set": {"status": "completed"}})
     return redirect(url_for('tasks'))
+
 
 @app.route('/tasks/delete/<task_id>', methods=['POST'])
 def delete_task(task_id):
     tasks_collection.delete_one({'_id': ObjectId(task_id)})
     return redirect(url_for('tasks'))
 
+
 @app.route('/tasks/edit/<task_id>', methods=['POST'])
 def edit_task(task_id):
     new_content = request.form.get('content')
     new_category = request.form.get('category')
-    tasks_collection.update_one({'_id': ObjectId(task_id)}, {"$set": {'content': new_content, 'category': new_category}}, upsert=False)
+    tasks_collection.update_one({'_id': ObjectId(task_id)},
+                                {"$set": {'content': new_content, 'category': new_category}}, upsert=False)
     return redirect(url_for('tasks'))
 
 
@@ -90,14 +97,12 @@ def get_weather():
 @login_required
 def default():
     _notes = notes_collection.find({'user_id': current_user.get_id()})
-
-    return render_template("dashboard.html", notes=list(_notes))
-
+    _pending_tasks = tasks_collection.find({'user_id': current_user.get_id(), "status": "pending"})
+    return render_template("dashboard.html", notes=_notes, pending_tasks=_pending_tasks)
 
 
 @login_manager.user_loader
 def load_user(user_id) -> User:
-    users = db['users']
     user_dict = users.find_one({'_id': ObjectId(user_id)})
     return User(user_dict)
 
@@ -109,7 +114,6 @@ def register_form():
 
 @app.route('/register', methods=['POST'])
 def register():
-    users = db['users']
     # Get data from request
     email = request.form.get('username')
     password = request.form.get('password')
@@ -140,7 +144,6 @@ def login_form():
 
 @app.route('/login', methods=['POST'])
 def login():
-    users = db['users']
     # Get data from request
     email = request.form.get('username')
     password = request.form.get('password')
@@ -161,22 +164,24 @@ def login():
     return redirect(url_for('default'))
 
 
-@app.route('/notes', methods=['GET', 'POST'])
-def notes():
-    if request.method == 'POST':
-        title = request.form.get('title')
-        content = request.form.get('content')
-        notes_collection.insert_one({
-            'title': title,
-            'content': content,
-            'user_id': current_user.get_id(),
-            'created_at': datetime.now(),
-            'updated_at': datetime.now(),
-            })
-        return redirect(url_for('notes'))
-    else:
-        _notes = notes_collection.find({"user_id": current_user.get_id()})
-        return render_template('notes.html', notes=_notes)
+@app.route('/notes', methods=['GET'])
+def get_notes():
+    _notes = notes_collection.find({"user_id": current_user.get_id()})
+    return render_template('notes.html', notes=_notes)
+
+
+@app.route('/notes/add', methods=['POST'])
+def add_note():
+    title = request.form.get('title')
+    content = request.form.get('content')
+    notes_collection.insert_one({
+        'title': title,
+        'content': content,
+        'user_id': current_user.get_id(),
+        'created_at': datetime.now(),
+        'updated_at': datetime.now(),
+    })
+    return redirect(url_for('get_notes'))
 
 
 @app.route('/note/<note_id>')

@@ -9,11 +9,11 @@
             font-style: italic;
         }
 
-        p{
+        p {
             margin: 0;
         }
 
-        h4{
+        h4 {
             margin: 0;
         }
 
@@ -122,11 +122,26 @@
             margin-bottom: 10px;
             padding: 10px;
         }
-        .sub-container{
+
+        .sub-container {
             display: flex;
             flex-direction: row;
             margin-top: auto;
             height: fit-content;
+        }
+
+        .task {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .task-content {
+            flex-grow: 1;
         }
     </style>
 </head>
@@ -148,28 +163,23 @@
 <div class="container">
     <div class="card">
         <div class="list-container">
-            {% if notes | length > 5 %}
-                {% for note in notes[:5] %}
-                    <!-- Each note is displayed as a sub-card -->
-                    <div class="subcard">
-                        <!-- Note title -->
-                        <p><b>{{ note.title }}</b></p>
-                        <!-- Note content (first 50 characters only) -->
-                        {% if note.content is not none %}
-                            <p>{{ note.content[:50] }}...</p>
-                        {% else %}
-                            <p>Content not available</p>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            {% else %}
+            {% for note in notes if note.title %}
+                <!-- Each note is displayed as a sub-card -->
                 <div class="subcard">
                     <!-- Note title -->
-                    <p><b>No Notes</b></p>
+                    <p><b>{{ note.title }}</b></p>
                     <!-- Note content (first 50 characters only) -->
-                    <p>Add your first note by navigating to notes</p>
+                    {% if note.content is not none %}
+                        <p>{{ note.content[:50] }}...</p>
+                    {% else %}
+                        <p>Content not available</p>
+                    {% endif %}
                 </div>
-            {% endif %}
+
+            {% else %}
+                <h4>No Notes available</h4>
+
+            {% endfor %}
 
         </div>
         <div class="sub-container">
@@ -178,22 +188,41 @@
         </div>
     </div>
     <div class="card">
-        <img src="static/img/login-list.png" alt="Image 1" style="width:100%">
-        <div class="container">
+        <div class="list-container">
+            {% for task in pending_tasks if task._id  %}
+                <div class="task">
+                    <span class="task-content" id="task-content-{{ task._id }}">{{ task.content }}</span>
+                    <span class="task-category category-{{ task.category|lower }}">{{ task.category }}</span>
+                    <div class="task-actions">
+                        <form action="/tasks/delete/{{ task._id }}" method="post" style="display:inline;">
+                            <button type="submit" class="delete-btn">🗑️</button>
+                        </form>
+                        <form action="/tasks/complete/{{ task._id }}" method="post" style="display:inline;">
+                            <input type="checkbox" name="completed" onChange="this.form.submit()"
+                                    {% if task.completed %} checked {% endif %}>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <h4>No Tasks available</h4>
+            {% endfor %}
+
+        </div>
+        <div class="sub-container">
             <h4><b>Todo-Liste</b></h4>
             <p>Some text..</p>
         </div>
     </div>
     <div class="card">
         <img src="static/img/login-list.png" alt="Image 1" style="width:100%">
-        <div class="container">
+        <div class="sub-container">
             <h4><b>Calendar</b></h4>
             <p>Some text..</p>
         </div>
     </div>
     <div class="card">
         <img src="static/img/login-list.png" alt="Image 1" style="width:100%">
-        <div class="container">
+        <div class="sub-container">
             <h4><b>Wetter</b></h4>
             <p>Some text..</p>
         </div>
