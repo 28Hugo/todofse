@@ -25,20 +25,14 @@
         <h2>To-Do Liste</h2>
         {% for task in pending_tasks %}
         	<div class="todo">
-            <form>
-                <input type="checkbox" aria-label="Checkbox">
+            <form name="task" action="/tasks/complete/{{ task._id }}" method="post">
+                <input type="checkbox" aria-label="Checkbox" onchange="this.form.submit()">
                 <p class="content">{{ task.content }}</p>
                 <p class="tag">{{ task.category }}</p>
             </form>
+            </div>
         {% endfor %}
-        </div>
-        <div class="todo">
-            <form>
-                <input type="checkbox" aria-label="Checkbox">
-                <p class="content">Aufgabe</p>
-                <p class="tag">Schule</p>
-            </form>
-        </div>
+
     </div>
 
     <div class="notes">
@@ -53,11 +47,11 @@
 
     <div class="weather">
         <div class="weather-header">
-            <form action="/weather">
-                <input class="location-search" type="text" name="city" value="Berlin" aria-label="Weather City">
+            <form action="/">
+                <input class="location-search" type="text" name="city" value="{{ weather['location']['name'] }}" aria-label="Weather City">
                 <input type="submit" hidden/>
             </form>
-            <i class="fa-solid fa-cloud"></i>
+            <i class="fa-solid {{ get_weather_icon_class(weather['current']['condition']['text']) }} fa-2xl"></i>
         </div>
         <div class="weather-main">
             {{ weather['current']['temp_c'] | int }}°
@@ -65,7 +59,7 @@
         <div class="weather-info">
             {% for hour in hours %}
             <div>
-                <i class="fa-solid fa-cloud"></i>
+                <i class="fa-solid {{ get_weather_icon_class(hour['condition']['text']) }} fa-lg"></i>
                 <div>{{ hour['time'] | formatdatetime }}</div>
                 <div>{{ hour['temp_c'] | round | int }}°</div>
             </div>
