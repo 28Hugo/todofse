@@ -1,5 +1,6 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
+import time
 
 from bson import ObjectId
 from flask import Flask, request, jsonify, send_from_directory, redirect, render_template, url_for
@@ -40,6 +41,47 @@ categories = ['Uni', 'Arbeit', 'Privat']
 WEATHER_API_KEY = '2321d60237674c67b4595038241006'
 
 
+def get_relevant_weather(data: dict) -> list[dict]:
+    hours = data["forecast"]["forecastday"][0]["hour"]
+    current_time = time.time()
+    return_hours: list[dict] = []
+    hour: dict[str, object]
+    for hour in hours:
+        if int(str(hour["time_epoch"])) > current_time:
+            return_hours.append(hour)
+    if len(return_hours) < 5:
+        return return_hours
+    else:
+        return return_hours[:5]
+
+
+def get_weather_icon_class(condition_text: str) -> str:
+    if condition_text == "Sunny":
+        return "fa-sun"
+    elif "partly cloudy" in condition_text.lower():
+        return "fa-cloud-sun"
+    elif condition_text == "Cloudy":
+        return "fa-cloud"
+    elif condition_text == "Clear":
+        return "fa-moon"
+    elif "light rain" in condition_text.lower():
+        return "fa-cloud-rain"
+    elif "moderate rain" in condition_text.lower():
+        return "fa-cloud-rain"
+    elif "snow" in condition_text.lower():
+        return "fa-snowflake"
+    elif "heavy rain" in condition_text.lower():
+        return "fa-cloud-showers-heavy"
+    elif "rain" in condition_text.lower():
+        return "fa-cloud-rain"
+    else:
+        print(condition_text)
+        return "fa-notdef"
+
+
+app.jinja_env.globals.update(get_weather_icon_class=get_weather_icon_class)
+
+
 @app.template_filter('formatdatetime')
 def format_datetime(value):
     date = datetime.strptime(value, "%Y-%m-%d %H:%M")
@@ -74,8 +116,10 @@ def add_task():
 
 @app.route('/tasks/complete/<task_id>', methods=['POST'])
 def complete_task(task_id):
-    tasks_collection.update_one({"_id": ObjectId(task_id)}, {"$set": {"status": "completed"}})
-    return redirect(url_for('tasks'))
+    task = tasks_collection.find_one({"_id": ObjectId(task_id)})
+    new_status = "completed" if task["status"] == "pending" else "pending"
+    tasks_collection.update_one({"_id": ObjectId(task_id)}, {"$set": {"status": new_status}})
+    return redirect(request.referrer)
 
 
 @app.route('/tasks/delete/<task_id>', methods=['POST'])
@@ -93,10 +137,7 @@ def edit_task(task_id):
     return redirect(url_for('tasks'))
 
 
-# API endpoint to get weather data
-@app.route('/weather', methods=['GET'])
-def get_weather():
-    city = request.args.get('city', default='Berlin')
+def get_weather(city):
     url = f"https://api.weatherapi.com/v1/forecast.json?key={WEATHER_API_KEY}&q={city}&aqi=no&hour_fields=temp_c,will_it_rain,cloud,condition:text"
     response = requests.get(url)
     if response.status_code == 200:
@@ -109,12 +150,11 @@ def get_weather():
 @app.route('/', methods=['GET'])
 @login_required
 def default():
+    city = "Berlin" if request.args.get('city') is None else request.args.get('city')
     _notes = notes_collection.find({'user_id': current_user.get_id()})
     _pending_tasks = tasks_collection.find({'user_id': current_user.get_id(), "status": "pending"})
-    _weather = get_weather()[0].json
-    print(_weather)
-    _hours: list = (_weather["forecast"]["forecastday"][0]["hour"])[:5]
-    print(_hours)
+    _weather = get_weather(city)[0].json
+    _hours: list = get_relevant_weather(_weather)
     return render_template("dashboard.html", notes=_notes, pending_tasks=_pending_tasks, weather=_weather, hours=_hours)
 
 
