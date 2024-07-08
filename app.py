@@ -1,4 +1,5 @@
-from datetime import datetime
+import json
+from datetime import datetime, timedelta
 
 from bson import ObjectId
 from flask import Flask, request, jsonify, send_from_directory, redirect, render_template, url_for
@@ -37,6 +38,18 @@ categories = ['Uni', 'Arbeit', 'Privat']
 
 # Your OpenWeatherMap API key
 WEATHER_API_KEY = '2321d60237674c67b4595038241006'
+
+
+@app.template_filter('formatdatetime')
+def format_datetime(value):
+    date = datetime.strptime(value, "%Y-%m-%d %H:%M")
+
+    return date.strftime('%H Uhr')
+
+
+@app.get('/test')
+def style_test():
+    return render_template('style-test.html')
 
 
 @app.get('/tasks')
@@ -83,8 +96,8 @@ def edit_task(task_id):
 # API endpoint to get weather data
 @app.route('/weather', methods=['GET'])
 def get_weather():
-    city = request.args.get('city', default='London')
-    url = f"http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={city}&aqi=no"
+    city = request.args.get('city', default='Berlin')
+    url = f"https://api.weatherapi.com/v1/forecast.json?key={WEATHER_API_KEY}&q={city}&aqi=no&hour_fields=temp_c,will_it_rain,cloud,condition:text"
     response = requests.get(url)
     if response.status_code == 200:
         return jsonify(response.json()), response.status_code
@@ -98,7 +111,11 @@ def get_weather():
 def default():
     _notes = notes_collection.find({'user_id': current_user.get_id()})
     _pending_tasks = tasks_collection.find({'user_id': current_user.get_id(), "status": "pending"})
-    return render_template("dashboard.html", notes=_notes, pending_tasks=_pending_tasks)
+    _weather = get_weather()[0].json
+    print(_weather)
+    _hours: list = (_weather["forecast"]["forecastday"][0]["hour"])[:5]
+    print(_hours)
+    return render_template("dashboard.html", notes=_notes, pending_tasks=_pending_tasks, weather=_weather, hours=_hours)
 
 
 @login_manager.user_loader
