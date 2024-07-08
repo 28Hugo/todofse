@@ -1,234 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>MainPage</title>
-    <style>
-        body {
-            margin: 1%;
-            font-family: Inter, sans-serif;
-            font-style: italic;
-        }
-
-        p {
-            margin: 0;
-        }
-
-        h4 {
-            margin: 0;
-        }
-
-        .navbar {
-            background-color: #333;
-            padding: 0 16px;
-            position: relative;
-        }
-
-        .navbar a {
-            color: #f2f2f2;
-            padding: 14px 16px;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .navbar a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-
-        .navbar a.text-link {
-            color: #f2f2f2;
-            padding: 5px 16px;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .navbar a.text-link:hover {
-            background-color: #ddd;
-            color: black;
-        }
-
-        .navbar a.icon-link {
-            padding: 5px 16px;
-        }
-
-        .nav-center {
-            display: flex;
-            justify-content: center;
-        }
-
-        .icon-left,
-        .icon-right {
-            position: absolute;
-            top: 14px;
-            width: 25px;
-        }
-
-        .icon-left {
-            left: 16px;
-        }
-
-        .icon-right {
-            right: 16px;
-        }
-
-        .container {
-            display: flex;
-            justify-content: space-around;
-            align-content: center;
-            flex-wrap: wrap;
-        }
-
-        .card {
-            display: flex;
-            flex-direction: column;
-            background-color: #f2f2f2;
-            width: 47%;
-            height: 40vh;
-            margin: 1%;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            align-content: space-between;
-        }
-
-        .card:hover {
-            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-        }
-
-
-        img {
-            width: 100%;
-            height: 80%;
-            object-fit: cover;
-            border-radius: 10px 10px 0 0;
-        }
-
-        .list-container {
-            width: 100%;
-            height: 80%;
-            margin: 1%;
-            object-fit: cover;
-            border-radius: 10px 10px 0 0;
-            overflow: hidden;
-        }
-
-        .subcard {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            width: 95%;
-            border-radius: 10px;
-            justify-content: space-between;
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
-            padding: 10px;
-        }
-
-        .sub-container {
-            display: flex;
-            flex-direction: row;
-            margin-top: auto;
-            height: fit-content;
-        }
-
-        .task {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .task-content {
-            flex-grow: 1;
-        }
-    </style>
+    <title>Todo App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/general.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/dashboard.css') }}">
+    <script src="https://kit.fontawesome.com/23b1dc6106.js" crossorigin="anonymous"></script>
 </head>
 <body>
+<nav class="navbar">
+    <div class="navbar-left">
+        <i class="fa-solid fa-bars fa-2xl" style="color: white"></i>
+    </div>
+    <div class="navbar-title">Dashboard</div>
+    <div class="navbar-right">
+        <img src="{{ url_for('static', filename='icons/profile.png') }}" alt="Profile" class="profile-pic">
+    </div>
+</nav>
+<div class="dashboard-container">
 
-<div class="navbar">
-    <a class="icon-link" href="http://localhost:5001/"><img class="icon-left" src="static/img/login-list.png"
-                                                            alt="Home icon" width="25"
-                                                            heigth="25"></a>
-    <div class="nav-center">
-        <a class="text-link" href="#">Home</a>
-        <a class="text-link" href="http://localhost:5001/weather">Wetter</a>
-        <a class="text-link" href="#">Page 3</a></div>
-    <a class="icon-link" href="http://localhost:5001/logout"><img class="icon-right" src="static/icons/user-icon.png"
-                                                                  alt="User icon"
-                                                                  width="25" height="25"></a>
-</div>
+    <img class="profile" src="{{ url_for('static', filename='img/face.png') }}" alt="Face of woman">
 
-<div class="container">
-    <div class="card">
-        <div class="list-container">
-            {% for note in notes if note.title %}
-                <!-- Each note is displayed as a sub-card -->
-                <div class="subcard">
-                    <!-- Note title -->
-                    <p><b>{{ note.title }}</b></p>
-                    <!-- Note content (first 50 characters only) -->
-                    {% if note.content is not none %}
-                        <p>{{ note.content[:50] }}...</p>
-                    {% else %}
-                        <p>Content not available</p>
-                    {% endif %}
-                </div>
+    <div class="todos">
+        <h2>To-Do Liste</h2>
+        {% for task in pending_tasks %}
+        	<div class="todo">
+            <form>
+                <input type="checkbox" aria-label="Checkbox">
+                <p class="content">{{ task.content }}</p>
+                <p class="tag">{{ task.category }}</p>
+            </form>
+        {% endfor %}
+        </div>
+        <div class="todo">
+            <form>
+                <input type="checkbox" aria-label="Checkbox">
+                <p class="content">Aufgabe</p>
+                <p class="tag">Schule</p>
+            </form>
+        </div>
+    </div>
 
-            {% else %}
-                <h4>No Notes available</h4>
+    <div class="notes">
+        <h2>Notizen</h2>
+        {% for note in notes %}
+            <div class="note">
+                <a href="/note/{{ note._id }}"><h4>{{ note.title }}</h4></a>
+                <p>{{ note.content }}</p>
+            </div>
+        {% endfor %}
+    </div>
 
+    <div class="weather">
+        <div class="weather-header">
+            <form action="/weather">
+                <input class="location-search" type="text" name="city" value="Berlin" aria-label="Weather City">
+                <input type="submit" hidden/>
+            </form>
+            <i class="fa-solid fa-cloud"></i>
+        </div>
+        <div class="weather-main">
+            {{ weather['current']['temp_c'] | int }}°
+        </div>
+        <div class="weather-info">
+            {% for hour in hours %}
+            <div>
+                <i class="fa-solid fa-cloud"></i>
+                <div>{{ hour['time'] | formatdatetime }}</div>
+                <div>{{ hour['temp_c'] | round | int }}°</div>
+            </div>
             {% endfor %}
-
-        </div>
-        <div class="sub-container">
-            <h4>Notizen</h4>
-            <a href="http://localhost:5001/notes">Open Notes Page</a>
-        </div>
-    </div>
-    <div class="card">
-        <div class="list-container">
-            {% for task in pending_tasks if task._id  %}
-                <div class="task">
-                    <span class="task-content" id="task-content-{{ task._id }}">{{ task.content }}</span>
-                    <span class="task-category category-{{ task.category|lower }}">{{ task.category }}</span>
-                    <div class="task-actions">
-                        <form action="/tasks/delete/{{ task._id }}" method="post" style="display:inline;">
-                            <button type="submit" class="delete-btn">🗑️</button>
-                        </form>
-                        <form action="/tasks/complete/{{ task._id }}" method="post" style="display:inline;">
-                            <input type="checkbox" name="completed" onChange="this.form.submit()"
-                                    {% if task.completed %} checked {% endif %}>
-                        </form>
-                    </div>
-                </div>
-            {% else %}
-                <h4>No Tasks available</h4>
-            {% endfor %}
-
-        </div>
-        <div class="sub-container">
-            <h4><b>Todo-Liste</b></h4>
-            <p>Some text..</p>
-        </div>
-    </div>
-    <div class="card">
-        <img src="static/img/login-list.png" alt="Image 1" style="width:100%">
-        <div class="sub-container">
-            <h4><b>Calendar</b></h4>
-            <p>Some text..</p>
-        </div>
-    </div>
-    <div class="card">
-        <img src="static/img/login-list.png" alt="Image 1" style="width:100%">
-        <div class="sub-container">
-            <h4><b>Wetter</b></h4>
-            <p>Some text..</p>
         </div>
     </div>
 </div>
-
-
 </body>
 </html>
