@@ -1,0 +1,130 @@
+.tasks-container {
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 20px;
+    background-color: #423F3F;
+    border-radius: var(--border-radius);
+}
+
+.task-table{
+    border-collapse: collapse;
+    width: 100%;
+    color: white;
+}
+
+th h3 {
+    margin: 10px 20px;
+}
+
+col{
+    border-right: 1px solid white;
+}
+
+col:last-child{
+    border-right: none;
+}
+
+thead tr{
+    border-bottom: 1px solid white;
+}
+
+.task-col{
+    width: fit-content;
+}
+
+td.status{
+    width: 0;
+    padding: 0 10px;
+}
+
+td.category{
+    width: 0;
+    text-align: center;
+    padding: 0 10px;
+}
+
+td.date{
+    width: 0;
+    padding: 0 10px;
+}
+
+.status-select {
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-bottom: 1px solid white;
+    padding: 5px 25px 5px 5px;
+    margin: 5px 10px;
+    width: fit-content;
+    box-sizing: border-box;
+    appearance: none; /* Remove default arrow */
+    -webkit-appearance: none; /* Remove default arrow in Safari */
+    -moz-appearance: none; /* Remove default arrow in Firefox */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"><polygon points="0,0 16,0 8,8"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+}
+
+.date-select{
+    color-scheme: dark;
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-bottom: 1px solid white;
+    padding: 5px;
+    margin: 5px 10px;
+    width: fit-content;
+    box-sizing: border-box;
+    appearance: none; /* Remove default arrow */
+    -webkit-appearance: none; /* Remove default arrow in Safari */
+    -moz-appearance: none; /* Remove default arrow in Firefox */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+}
+
+
+.date input:focus{
+    outline: none;
+}
+
+.category{
+    color: white;
+    border-radius: 3px;
+}
+
+.category.uni{ 
+    background-color: #f0a500; 
+}
+
+.category.work {
+    background-color: #007bff;
+}
+
+.category.private {
+    background-color: #28a745;
+}
+
+.task-input{
+    color-scheme: dark;
+    font-family: Inter, sans-serif;
+    font-style: italic;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 5px;
+    margin: 5px 10px;
+    width: 90%;
+    box-sizing: border-box;
+    background-repeat: no-repeat;
+}
+
+.task-input:focus{
+    outline: none;
+    border-bottom: 1px solid white;
+}

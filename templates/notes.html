@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/general.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/navbar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/menu.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/dashboard.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/notes.css') }}">
     <script src="https://kit.fontawesome.com/23b1dc6106.js" crossorigin="anonymous"></script>
 
@@ -47,17 +46,6 @@
             </div>
         {% endfor %}
     </div>
-    <!--
-        {% for note in notes %}
-            <div class="card">
-                <div class="notes-container">
-                    <h3 class="note-title">{{ note.title }}</h3>
-                    <p>{{ note.content }}</p>
-                    <a href="{{ url_for('note_detail', note_id=note._id) }}">View More</a>
-                </div>
-            </div>
-        {% endfor %}
-        -->
 </div>
 
 

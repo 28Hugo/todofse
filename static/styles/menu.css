@@ -1,4 +1,5 @@
 .menu-bar {
+  display: none;
   width: fit-content;
   min-width: 200px;
   max-width: 250px;

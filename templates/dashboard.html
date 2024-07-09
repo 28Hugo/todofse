@@ -38,7 +38,7 @@
                     <form name="task" action="/tasks/complete/{{ task._id }}" method="post">
                         <input type="checkbox" aria-label="Checkbox" onchange="this.form.submit()">
                         <p class="content">{{ task.content }}</p>
-                        <p class="tag">{{ task.category }}</p>
+                        <p class="category {{task.category}}">{{ task.category }}</p>
                     </form>
                 </div>
             {% endfor %}
