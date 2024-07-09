@@ -89,12 +89,8 @@ def format_datetime(value):
     return date.strftime('%H Uhr')
 
 
-@app.get('/test')
-def style_test():
-    return render_template('style-test.html')
-
-
 @app.get('/tasks')
+@login_required
 def tasks():
     _tasks = tasks_collection.find({"user_id": current_user.get_id()}, sort=[('status', DESCENDING)])
 
@@ -102,6 +98,7 @@ def tasks():
 
 
 @app.route('/tasks/add', methods=['POST'])
+@login_required
 def add_task():
     task_content = request.form.get('content')
     task_category = request.form.get('category')
@@ -115,12 +112,14 @@ def add_task():
 
 
 @app.route('/tasks/delete/<task_id>', methods=['POST'])
+@login_required
 def delete_task(task_id):
     tasks_collection.delete_one({'_id': ObjectId(task_id)})
     return redirect(url_for('tasks'))
 
 
 @app.route('/tasks/edit/<task_id>', methods=['POST'])
+@login_required
 def edit_task(task_id):
     new_content = request.form.get('content')
     new_category = request.form.get('category')
@@ -218,12 +217,14 @@ def login():
 
 
 @app.route('/notes', methods=['GET'])
+@login_required
 def get_notes():
     _notes = notes_collection.find({"user_id": current_user.get_id()}, sort=[('created_at', DESCENDING)])
     return render_template('notes.html', notes=_notes)
 
 
 @app.route('/notes/add', methods=['POST'])
+@login_required
 def add_note():
     title = request.form.get('title')
     content = request.form.get('content')
@@ -238,6 +239,7 @@ def add_note():
 
 
 @app.route('/note/<note_id>')
+@login_required
 def note_detail(note_id):
     note = notes_collection.find_one({'_id': ObjectId(note_id)})
     return render_template('note.html', note=note)
