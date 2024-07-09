@@ -5,7 +5,7 @@ import time
 from bson import ObjectId
 from flask import Flask, request, jsonify, send_from_directory, redirect, render_template, url_for
 from flask_bcrypt import Bcrypt
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING
 from flask_cors import CORS
 import requests
 
@@ -223,7 +223,7 @@ def login():
 
 @app.route('/notes', methods=['GET'])
 def get_notes():
-    _notes = notes_collection.find({"user_id": current_user.get_id()})
+    _notes = notes_collection.find({"user_id": current_user.get_id()}, sort=[('created_at', DESCENDING)])
     return render_template('notes.html', notes=_notes)
 
 
