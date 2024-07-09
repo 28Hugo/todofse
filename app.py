@@ -35,7 +35,7 @@ tasks_collection = db["tasks"]
 notes_collection = db["notes"]
 
 # Updated categories
-categories = ['Uni', 'Arbeit', 'Privat']
+categories = ['uni', 'work', 'private']
 
 # Your OpenWeatherMap API key
 WEATHER_API_KEY = '2321d60237674c67b4595038241006'
@@ -62,7 +62,7 @@ def get_weather_icon_class(condition_text: str) -> str:
         return "fa-cloud-sun"
     elif condition_text == "Cloudy":
         return "fa-cloud"
-    elif condition_text == "Clear":
+    elif "clear" in condition_text.lower():
         return "fa-moon"
     elif "light rain" in condition_text.lower():
         return "fa-cloud-rain"
@@ -96,30 +96,22 @@ def style_test():
 
 @app.get('/tasks')
 def tasks():
-    # Separate tasks into pending and completed
-    pending_tasks = tasks_collection.find({"user_id": current_user.get_id(), "status": "pending"})
-    completed_tasks = tasks_collection.find({"user_id": current_user.get_id(), "status": "completed"})
+    _tasks = tasks_collection.find({"user_id": current_user.get_id()}, sort=[('status', DESCENDING)])
 
-    return render_template('tasks.html', pending_tasks=pending_tasks, completed_tasks=completed_tasks,
-                           categories=categories)
+    return render_template('tasks.html', tasks=_tasks, categories=categories)
 
 
 @app.route('/tasks/add', methods=['POST'])
 def add_task():
     task_content = request.form.get('content')
-    task_category = request.form.get('category')  # Access 'category' field from form
+    task_category = request.form.get('category')
+    task_date = request.form.get('date')
+    task_status = request.form.get('status')
     if task_content:
         tasks_collection.insert_one(
-            {"user_id": current_user.get_id(), 'content': task_content, 'category': task_category, 'status': "pending"})
+            {"user_id": current_user.get_id(), 'content': task_content, 'category': task_category, 'date': task_date,
+             'status': task_status})
     return redirect(url_for('tasks'))
-
-
-@app.route('/tasks/complete/<task_id>', methods=['POST'])
-def complete_task(task_id):
-    task = tasks_collection.find_one({"_id": ObjectId(task_id)})
-    new_status = "completed" if task["status"] == "pending" else "pending"
-    tasks_collection.update_one({"_id": ObjectId(task_id)}, {"$set": {"status": new_status}})
-    return redirect(request.referrer)
 
 
 @app.route('/tasks/delete/<task_id>', methods=['POST'])
@@ -132,8 +124,12 @@ def delete_task(task_id):
 def edit_task(task_id):
     new_content = request.form.get('content')
     new_category = request.form.get('category')
+    new_date = request.form.get('date')
+    new_status = request.form.get('status')
+    print({'content': new_content, 'category': new_category, 'date': new_date, 'status': new_status})
     tasks_collection.update_one({'_id': ObjectId(task_id)},
-                                {"$set": {'content': new_content, 'category': new_category}}, upsert=False)
+                                {"$set": {'content': new_content, 'category': new_category, 'date': new_date,
+                                          'status': new_status}}, upsert=False)
     return redirect(url_for('tasks'))
 
 
@@ -152,7 +148,7 @@ def get_weather(city):
 def default():
     city = "Berlin" if request.args.get('city') is None else request.args.get('city')
     _notes = notes_collection.find({'user_id': current_user.get_id()})
-    _pending_tasks = tasks_collection.find({'user_id': current_user.get_id(), "status": "pending"})
+    _pending_tasks = tasks_collection.find({'user_id': current_user.get_id(), "status": {"$ne": "completed"}})
     _weather = get_weather(city)[0].json
     _hours: list = get_relevant_weather(_weather)
     return render_template("dashboard.html", notes=_notes, pending_tasks=_pending_tasks, weather=_weather, hours=_hours)
