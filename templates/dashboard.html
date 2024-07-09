@@ -4,68 +4,90 @@
     <title>Todo App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/general.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/menu.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/dashboard.css') }}">
     <script src="https://kit.fontawesome.com/23b1dc6106.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <nav class="navbar">
     <div class="navbar-left">
-        <i class="fa-solid fa-bars fa-2xl" style="color: white"></i>
+        <i id="hamburger-icon" class="fa-solid fa-bars fa-2xl" style="color: white"></i>
     </div>
     <div class="navbar-title">Dashboard</div>
     <div class="navbar-right">
         <img src="{{ url_for('static', filename='icons/profile.png') }}" alt="Profile" class="profile-pic">
     </div>
 </nav>
-<div class="dashboard-container">
-
-    <img class="profile" src="{{ url_for('static', filename='img/face.png') }}" alt="Face of woman">
-
-    <div class="todos">
-        <h2>To-Do Liste</h2>
-        {% for task in pending_tasks %}
-        	<div class="todo">
-            <form name="task" action="/tasks/complete/{{ task._id }}" method="post">
-                <input type="checkbox" aria-label="Checkbox" onchange="this.form.submit()">
-                <p class="content">{{ task.content }}</p>
-                <p class="tag">{{ task.category }}</p>
-            </form>
-            </div>
-        {% endfor %}
-
+<div class="content">
+    <div class="menu-bar">
+        <div class="menu-item"><a href="{{ url_for('default') }}"><span class="icon">🏠</span>Dashboard</a></div>
+        <div class="menu-item"><a href="{{ url_for('tasks') }}"><span class="icon">✅</span>Tasks</a></div>
+        <div class="menu-item"><a href="{{ url_for('get_notes') }}"><span class="icon">🗒️</span>Notizen</a></div>
+        <div class="menu-item"><a href="#"><span class="icon">📦</span>Export Data</a></div>
+        <div class="menu-item"><a href="#"><span class="icon">📷</span>Change Image</a></div>
+        <div class="menu-item"><a href="#"><span class="icon">⚙️</span> Account Settings</a></div>
     </div>
+    <div class="dashboard-container">
 
-    <div class="notes">
-        <h2>Notizen</h2>
-        {% for note in notes %}
-            <div class="note">
-                <a href="/note/{{ note._id }}"><h4>{{ note.title }}</h4></a>
-                <p>{{ note.content }}</p>
-            </div>
-        {% endfor %}
-    </div>
+        <img class="profile" src="{{ url_for('static', filename='img/face.png') }}" alt="Face of woman">
 
-    <div class="weather">
-        <div class="weather-header">
-            <form action="/">
-                <input class="location-search" type="text" name="city" value="{{ weather['location']['name'] }}" aria-label="Weather City">
-                <input type="submit" hidden/>
-            </form>
-            <i class="fa-solid {{ get_weather_icon_class(weather['current']['condition']['text']) }} fa-2xl"></i>
-        </div>
-        <div class="weather-main">
-            {{ weather['current']['temp_c'] | int }}°
-        </div>
-        <div class="weather-info">
-            {% for hour in hours %}
-            <div>
-                <i class="fa-solid {{ get_weather_icon_class(hour['condition']['text']) }} fa-lg"></i>
-                <div>{{ hour['time'] | formatdatetime }}</div>
-                <div>{{ hour['temp_c'] | round | int }}°</div>
-            </div>
+        <div class="todos">
+            <h2>To-Do Liste</h2>
+            {% for task in pending_tasks %}
+                <div class="todo">
+                    <form name="task" action="/tasks/complete/{{ task._id }}" method="post">
+                        <input type="checkbox" aria-label="Checkbox" onchange="this.form.submit()">
+                        <p class="content">{{ task.content }}</p>
+                        <p class="tag">{{ task.category }}</p>
+                    </form>
+                </div>
             {% endfor %}
+
+        </div>
+
+        <div class="notes">
+            <h2>Notizen</h2>
+            {% for note in notes %}
+                <div class="note">
+                    <a href="/note/{{ note._id }}"><h4>{{ note.title }}</h4></a>
+                    <p>{{ note.content }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="weather">
+            <div class="weather-header">
+                <form action="/">
+                    <input class="location-search" type="text" name="city" value="{{ weather['location']['name'] }}"
+                           aria-label="Weather City">
+                    <input type="submit" hidden/>
+                </form>
+                <i class="fa-solid {{ get_weather_icon_class(weather['current']['condition']['text']) }} fa-2xl"></i>
+            </div>
+            <div class="weather-main">
+                {{ weather['current']['temp_c'] | int }}°
+            </div>
+            <div class="weather-info">
+                {% for hour in hours %}
+                    <div>
+                        <i class="fa-solid {{ get_weather_icon_class(hour['condition']['text']) }} fa-lg"></i>
+                        <div>{{ hour['time'] | formatdatetime }}</div>
+                        <div>{{ hour['temp_c'] | round | int }}°</div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
+<script>
+    document.getElementById("hamburger-icon").addEventListener("click", function () {
+        const menuBar = document.querySelector(".menu-bar");
+        if (menuBar.style.display === "none") {
+            menuBar.style.display = "block";
+        } else {
+            menuBar.style.display = "none";
+        }
+    });
+</script>
 </body>
 </html>
