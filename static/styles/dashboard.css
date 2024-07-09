@@ -140,7 +140,7 @@
   }
   .weather-info {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
   }
   .weather-info div {
     text-align: center;
@@ -149,3 +149,21 @@
     width: 30px;
     height: 30px;
   }
+
+  .category{
+    color: white;
+    border-radius: 3px;
+    padding: 1px 5px;
+}
+
+.category.uni{ 
+    background-color: #f0a500; 
+}
+
+.category.work {
+    background-color: #007bff;
+}
+
+.category.private {
+    background-color: #28a745;
+}
