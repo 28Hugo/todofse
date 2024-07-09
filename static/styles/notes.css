@@ -18,6 +18,10 @@
     border-bottom: 1px solid white;
 }
 
+.note a:visited, .note a:hover, .note a:link{
+    text-decoration: none;
+}
+
 .note:last-child{
     border-bottom: none;
 }
