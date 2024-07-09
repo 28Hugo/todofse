@@ -3,86 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <title>Notizen</title>
-    <style>
-        body {
-            margin: 1%;
-            font-family: Inter, sans-serif;
-            font-style: italic;
-        }
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/general.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/menu.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/notes.css') }}">
+    <script src="https://kit.fontawesome.com/23b1dc6106.js" crossorigin="anonymous"></script>
 
-        .container {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-
-        .card {
-            background-color: #f2f2f2;
-            width: fit-content;
-            max-width: 50%;
-            height: fit-content;
-            padding: 2%;
-            margin: 1%;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-
-        .card:hover {
-            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-        }
-
-        .notes-container {
-            width: 100%;
-            height: 80%;
-            object-fit: cover;
-            overflow: auto;
-            border-radius: 10px 10px 0 0;
-        }
-
-        .note-title {
-            margin: 0 1em 0 0;
-        }
-
-        .note-form {
-            display: block;
-        }
-
-        .note-field {
-            margin-bottom: auto;
-        }
-
-    </style>
 </head>
 <body>
-
-<h1>List of Notes :</h1>
-
-<div class="container">
-    <div class="card">
-        <div class="notes-container">
-            <h3 class="note-title">Add note:</h3>
-            <form action="/notes/add" class="note-form" method="POST">
-                <div class="note-field">
-                    <input type="text" name="title" placeholder="Title..."></div>
-                <br>
-                <div class="note-field">
-                    <textarea name="content" placeholder="Note..."></textarea></div>
-                <br>
-                <input type="submit" value="Add Note">
-            </form>
-        </div>
+<nav class="navbar">
+    <div class="navbar-left">
+        <i id="hamburger-icon" class="fa-solid fa-bars fa-2xl" style="color: white"></i>
     </div>
-    {% for note in notes %}
-        <div class="card">
-            <div class="notes-container">
+    <div class="navbar-title">Notes</div>
+    <div class="navbar-right">
+        <img src="{{ url_for('static', filename='icons/profile.png') }}" alt="Profile" class="profile-pic">
+    </div>
+</nav>
+<div class="content">
+    <div class="menu-bar">
+        <div class="menu-item"><a href="{{ url_for('default') }}"><span class="icon">🏠</span>Dashboard</a></div>
+        <div class="menu-item"><a href="{{ url_for('tasks') }}"><span class="icon">✅</span>Tasks</a></div>
+        <div class="menu-item"><a href="{{ url_for('get_notes') }}"><span class="icon">🗒️</span>Notizen</a></div>
+        <div class="menu-item"><a href="#"><span class="icon">📦</span>Export Data</a></div>
+        <div class="menu-item"><a href="#"><span class="icon">📷</span>Change Image</a></div>
+        <div class="menu-item"><a href="#"><span class="icon">⚙️</span>Account Settings</a></div>
+    </div>
+    <div class="notes-container">
+            <div class="note">
+                <form class="note-form" action="{{ url_for('add_note') }}" method="post">
+                    <input class="note-field title" name="title" placeholder="Add Note" aria-label="title input">
+                    <br>
+                    <textarea class="note-field content" name="content" placeholder="Note content" aria-label="content input"></textarea>
+                    <input type="submit" value="Add Note"/>
+                </form>
+            </div>
+            {% for note in notes %}
+            <div class="note">
                 <h3 class="note-title">{{ note.title }}</h3>
                 <p>{{ note.content }}</p>
-                <a href="{{ url_for('note_detail', note_id=note._id) }}">View More</a>
             </div>
+            {% endfor %}
         </div>
-    {% endfor %}
+        <!--
+        {% for note in notes %}
+            <div class="card">
+                <div class="notes-container">
+                    <h3 class="note-title">{{ note.title }}</h3>
+                    <p>{{ note.content }}</p>
+                    <a href="{{ url_for('note_detail', note_id=note._id) }}">View More</a>
+                </div>
+            </div>
+        {% endfor %}
+        -->
+    </div>
 </div>
 
+<script>
+    document.getElementById("hamburger-icon").addEventListener("click", function () {
+        const menuBar = document.querySelector(".menu-bar");
+        if (menuBar.style.display === "none") {
+            menuBar.style.display = "block";
+        } else {
+            menuBar.style.display = "none";
+        }
+    });
+</script>
 
 </body>
 </html>
