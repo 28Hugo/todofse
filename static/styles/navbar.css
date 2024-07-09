@@ -1,8 +1,9 @@
 .navbar {
     display: flex;
     justify-content: space-between;
-    padding: 5px;
+    padding: 5px 5px 10px 5px;
     background-color: transparent;
+    align-items: center;
 }
 
 .navbar-title{
