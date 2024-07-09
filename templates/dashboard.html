@@ -11,7 +11,7 @@
 <body>
 <nav class="navbar">
     <div class="navbar-left">
-        <i id="hamburger-icon" class="fa-solid fa-bars fa-2xl" style="color: white"></i>
+        <i id="hamburger-icon" class="fa-solid fa-bars fa-2xl"></i>
     </div>
     <div class="navbar-title">Dashboard</div>
     <div class="navbar-right">
@@ -50,7 +50,7 @@
             {% for note in notes %}
                 <div class="note">
                     <a href="/note/{{ note._id }}"><h4>{{ note.title }}</h4></a>
-                    <p>{{ note.content }}</p>
+                    <p>{{ note.content[:60] }}...</p>
                 </div>
             {% endfor %}
         </div>
@@ -82,7 +82,7 @@
 <script>
     document.getElementById("hamburger-icon").addEventListener("click", function () {
         const menuBar = document.querySelector(".menu-bar");
-        if (menuBar.style.display === "none") {
+        if (menuBar.style.display === "none" || menuBar.style.display === "") {
             menuBar.style.display = "block";
         } else {
             menuBar.style.display = "none";
