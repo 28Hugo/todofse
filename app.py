@@ -2,8 +2,8 @@ import json
 from datetime import datetime
 import time
 
-from bson import ObjectId
-from flask import Flask, request, jsonify, send_from_directory, redirect, render_template, url_for
+from bson import ObjectId, json_util
+from flask import Flask, request, jsonify, send_from_directory, redirect, render_template, url_for, send_file
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient, DESCENDING
 from flask_cors import CORS
@@ -250,6 +250,21 @@ def note_detail(note_id):
 def logout():
     logout_user()
     return redirect(url_for('default'))
+
+
+@app.get('/export')
+@login_required
+def export():
+    user_notes = notes_collection.find({"user_id": current_user.get_id()})
+    user_tasks = tasks_collection.find({"user_id": current_user.get_id()})
+    export_data = {
+        "notes": list(user_notes),
+        "tasks": list(user_tasks)
+    }
+    with open('export.json', 'w') as outfile:
+        json.dump(export_data, outfile, default=json_util.default)
+
+    return send_file('export.json', as_attachment=True)
 
 
 if __name__ == "__main__":
