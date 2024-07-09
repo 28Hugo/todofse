@@ -18,6 +18,14 @@
     color: white;
 }
 
+#hamburger-icon{
+    color: white;
+}
+
+#hamburger-icon:hover{
+    color: black;
+}
+
 
 .profile-pic {
     height: 40px;
