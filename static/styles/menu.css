@@ -1,0 +1,48 @@
+.menu-bar {
+  width: fit-content;
+  min-width: 200px;
+  max-width: 250px;
+  height: fit-content;
+  min-height: 600px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px 30px 10px 30px;
+  margin: 10px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 1px solid #eaeaea;
+  text-decoration: none;
+  color: black;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.icon {
+  margin-right: 10px;
+  font-style: normal;
+  font-size: 24px;
+}
+
+.menu-item a:link{
+  text-decoration: none;
+  color: black;
+}
+
+.menu-item a:visited{
+  text-decoration: none;
+  color: black;
+}
+
+.menu-item a:hover{
+  text-decoration: none;
+  color: black;
+}

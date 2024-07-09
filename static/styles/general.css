@@ -11,3 +11,6 @@ body {
     font-style: italic;
     background-color: var(--site-background);
 }
+.content{
+    display: flex;
+}
